@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
+const paginate = require("express-paginate");
 const app = express();
 
 // MongoDB connection setup
@@ -25,6 +26,8 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(paginate.middleware(10, 50));
 
 // Passport configuration
 passport.use(new LocalStrategy(User.authenticate()));
@@ -105,8 +108,29 @@ app.post("/medicine/add", isLoggedIn, async (req, res) => {
 });
 
 app.get("/medicine", isLoggedIn, async (req, res) => {
-  const medicines = await Medicine.find({ user: req.user });
-  res.render("medicine", { medicines });
+  try {
+    const [medicines, itemCount] = await Promise.all([
+      Medicine.find({ user: req.user })
+        .sort({ createdAt: -1 })
+        .skip(req.skip)
+        .limit(req.query.limit)
+        .lean()
+        .exec(),
+      Medicine.countDocuments({ user: req.user }),
+    ]);
+
+    const pageCount = Math.ceil(itemCount / req.query.limit);
+
+    res.render("medicine", {
+      medicines,
+      pageCount,
+      itemCount,
+      pages: paginate.getArrayPages(req)(3, pageCount, req.query.page),
+    });
+  } catch (error) {
+    console.error(error);
+    res.redirect("/medicine");
+  }
 });
 
 app.get("/medicine/edit/:id", isLoggedIn, async (req, res) => {
