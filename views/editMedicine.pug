@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  h1 Edit Medicine
+  form(action=`/medicine/edit/${medicine._id}`, method='POST')
+    label(for='name') Medicine Name:
+    input(type='text', id='name', name='name', value=medicine.name, required)
+    br
+    label(for='brand') Brand:
+    input(type='text', id='brand', name='brand', value=medicine.brand, required)
+    br
+    input(type='submit', value='Save Changes')

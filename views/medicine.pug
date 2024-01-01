@@ -1,0 +1,36 @@
+extends layout
+
+block content
+  h1 Medicine Management
+  form(action='/medicine/add', method='post')
+    label(for='name') Medicine Name:
+    input(type='text', name='name', required)
+    br
+    label(for='brand') Brand:
+    input(type='text', name='brand', required)
+    br
+    input(type='submit', value='Add Medicine')
+
+  if medicines.length > 0
+    table
+      thead
+        tr
+          th Medicine Name
+          th Brand
+          th Actions
+      tbody
+        each medicine in medicines
+          tr
+            td= medicine.name
+            td= medicine.brand
+            td
+              a(href=`/medicine/edit/${medicine._id}`) Edit
+              |  | 
+              a(href=`/medicine/delete/${medicine._id}`) Delete
+  else
+    p No medicines available.
+
+  hr
+
+  form(action='/logout', method='get')
+    input(type='submit', value='Logout')
