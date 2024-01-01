@@ -5,16 +5,18 @@ html(lang='en')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     title Medicine Management
     link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css', integrity='sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm', crossorigin='anonymous')
+    link(rel='stylesheet', href='/path/to/styles.css')
+
 
   body
     nav.navbar.navbar-expand-lg.navbar-light.bg-light
-      a.navbar-brand(href='/') Medicine App
+      a.navbar-brand(href='/') MyMeds
       button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNav', aria-controls='navbarNav', aria-expanded='false', aria-label='Toggle navigation')
         span.navbar-toggler-icon
       div.collapse.navbar-collapse#navbarNav
         ul.navbar-nav
           li.nav-item
-            a.nav-link(href='/medicine') Medicine
+            a.nav-link(href='/medicine') Home
           li.nav-item
             a.nav-link(href='/logout') Logout
 

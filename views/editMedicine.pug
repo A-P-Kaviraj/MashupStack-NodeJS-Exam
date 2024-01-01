@@ -1,12 +1,15 @@
 extends layout
 
 block content
-  h1 Edit Medicine
-  form(action=`/medicine/edit/${medicine._id}`, method='POST')
-    label(for='name') Medicine Name:
-    input(type='text', id='name', name='name', value=medicine.name, required)
+  h1.text-center.mb-4 Edit Medicine
+
+  form(action=`/medicine/edit/${medicine._id}`, method='post', class='card p-3')
+    div.row
+      div.col-md-6
+        label(for='name') Medicine Name:
+        input(type='text', name='name', value=medicine.name, required, class='form-control')
+      div.col-md-6
+        label(for='brand') Brand:
+        input(type='text', name='brand', value=medicine.brand, required, class='form-control')
     br
-    label(for='brand') Brand:
-    input(type='text', id='brand', name='brand', value=medicine.brand, required)
-    br
-    input(type='submit', value='Save Changes')
+    input(type='submit', value='Save Changes', class='btn btn-primary mt-2')

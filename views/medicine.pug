@@ -1,9 +1,9 @@
 extends layout
 
 block content
-  h1 Medicine Management
-
+  
   // Search Form
+  h2.mb-3 Search Medicines
   form(action='/medicine/search', method='GET', class='mb-3')
     div.input-group
       input(type='text', name='q', placeholder='Search...', class='form-control')
@@ -11,15 +11,20 @@ block content
         input(type='submit', value='Search', class='btn btn-outline-secondary')
 
   // Add Medicine Form
-  form(action='/medicine/add', method='post')
-    label(for='name') Medicine Name:
-    input(type='text', name='name', required, class='form-control')
+  h2.mb-3 Add Medicine
+  form.mb-3(action='/medicine/add', method='post', class='card p-3')
+    div.row
+      div.col-md-6
+        label(for='name') Medicine Name:
+        input(type='text', name='name', required, class='form-control')
+      div.col-md-6
+        label(for='brand') Brand:
+        input(type='text', name='brand', required, class='form-control')
     br
-    label(for='brand') Brand:
-    input(type='text', name='brand', required, class='form-control')
-    br
-    input(type='submit', value='Add Medicine', class='btn btn-primary')
+    input(type='submit', value='Add Medicine', class='btn btn-primary mt-2')
 
+  // Medicine List
+  h2.mb-3 Medicine List
   if medicines.length > 0
     // Medicine List Table
     table.table.table-striped.mt-3
@@ -36,12 +41,12 @@ block content
             td
               a(href=`/medicine/edit/${medicine._id}`, class='btn btn-warning btn-sm') Edit
               | 
-              a(href=`/medicine/delete/${medicine._id}`, onclick='return confirm("Are you sure you want to delete this medicine?")', class='btn btn-danger btn-sm') Delete
+              a(href=`/medicine/delete/${medicine._id}`, onclick='return confirm("Are you sure you want to delete this medicine from MyMeds?")', class='btn btn-danger btn-sm') Delete
   else
     p No medicines available.
 
   hr
 
   // Logout Button
-  form(action='/logout', method='get')
+  form.mb-3(action='/logout', method='get', class='mt-3')
     input(type='submit', value='Logout', class='btn btn-secondary')

@@ -90,6 +90,20 @@ app.get("/medicine/search", isLoggedIn, async (req, res) => {
   }
 });
 
+app.post("/medicine/add", isLoggedIn, async (req, res) => {
+  const { name, brand } = req.body;
+  const newMedicine = new Medicine({ name, brand, user: req.user });
+
+  try {
+    await newMedicine.save();
+    res.redirect("/medicine");
+  } catch (error) {
+    // Handle errors
+    console.error(error);
+    res.redirect("/medicine");
+  }
+});
+
 app.get("/medicine", isLoggedIn, async (req, res) => {
   const medicines = await Medicine.find({ user: req.user });
   res.render("medicine", { medicines });
@@ -98,8 +112,8 @@ app.get("/medicine", isLoggedIn, async (req, res) => {
 app.get("/medicine/edit/:id", isLoggedIn, async (req, res) => {
   try {
     const medicine = await Medicine.findById(req.params.id);
-    if (!medicine) {
-      // Handle case where medicine is not found
+    if (!medicine || medicine.user.toString() !== req.user._id.toString()) {
+      // Handle case where medicine is not found or user is unauthorized
       res.redirect("/medicine");
       return;
     }
@@ -118,8 +132,20 @@ app.post("/medicine/edit/:id", isLoggedIn, async (req, res) => {
 });
 
 app.get("/medicine/delete/:id", isLoggedIn, async (req, res) => {
-  await Medicine.findByIdAndDelete(req.params.id);
-  res.redirect("/medicine");
+  try {
+    const medicine = await Medicine.findById(req.params.id);
+    if (!medicine || medicine.user.toString() !== req.user._id.toString()) {
+      // Handle case where medicine is not found or user is unauthorized
+      res.redirect("/medicine");
+      return;
+    }
+    await Medicine.findByIdAndDelete(req.params.id);
+    res.redirect("/medicine");
+  } catch (error) {
+    // Handle errors
+    console.error(error);
+    res.redirect("/medicine");
+  }
 });
 
 // Middleware to check if a user is logged in

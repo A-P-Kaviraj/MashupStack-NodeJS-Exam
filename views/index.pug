@@ -1,8 +1,11 @@
 extends layout
 
 block content
-  h1 Welcome to the Medical Store Management System
-  p
-    a(href='/login') Login
-    |  or 
-    a(href='/signup') Sign Up
+  div.container.text-center.mt-5.p-4.bg-light.rounded
+    h1.mb-4 Welcome to MyMeds
+    p.mb-4
+      | This is a simple application for managing medicines.
+      br
+      | Please log in or sign up to get started.
+    a.btn.btn-primary(href='/login', role='button', style='margin-right: 10px;') Log In
+    a.btn.btn-secondary(href='/signup', role='button') Sign Up
