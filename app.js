@@ -7,17 +7,14 @@ const LocalStrategy = require("passport-local").Strategy;
 const paginate = require("express-paginate");
 const app = express();
 
-// MongoDB connection setup
 mongoose.connect("mongodb://0.0.0.0:27017/medical_store", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
-// Models
 const User = require("./models/User");
 const Medicine = require("./models/medicine");
 
-// Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.set("view engine", "pug");
@@ -29,12 +26,10 @@ app.use(passport.session());
 
 app.use(paginate.middleware(10, 50));
 
-// Passport configuration
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// Routes
 app.get("/", (req, res) => {
   res.render("index");
 });
@@ -77,14 +72,12 @@ app.get("/logout", (req, res) => {
   });
 });
 
-// Medicine routes
-
 app.get("/medicine/search", isLoggedIn, async (req, res) => {
-  const query = req.query.q; // Get the search query from the URL parameter
+  const query = req.query.q;
   try {
     const medicines = await Medicine.find(
       { $text: { $search: query }, user: req.user },
-      { score: { $meta: "textScore" } } // Sort by text score
+      { score: { $meta: "textScore" } }
     ).sort({ score: { $meta: "textScore" } });
     res.render("medicine", { medicines });
   } catch (error) {
@@ -101,7 +94,6 @@ app.post("/medicine/add", isLoggedIn, async (req, res) => {
     await newMedicine.save();
     res.redirect("/medicine");
   } catch (error) {
-    // Handle errors
     console.error(error);
     res.redirect("/medicine");
   }
@@ -137,13 +129,11 @@ app.get("/medicine/edit/:id", isLoggedIn, async (req, res) => {
   try {
     const medicine = await Medicine.findById(req.params.id);
     if (!medicine || medicine.user.toString() !== req.user._id.toString()) {
-      // Handle case where medicine is not found or user is unauthorized
       res.redirect("/medicine");
       return;
     }
     res.render("editMedicine", { medicine });
   } catch (error) {
-    // Handle errors
     console.error(error);
     res.redirect("/medicine");
   }
@@ -159,20 +149,17 @@ app.get("/medicine/delete/:id", isLoggedIn, async (req, res) => {
   try {
     const medicine = await Medicine.findById(req.params.id);
     if (!medicine || medicine.user.toString() !== req.user._id.toString()) {
-      // Handle case where medicine is not found or user is unauthorized
       res.redirect("/medicine");
       return;
     }
     await Medicine.findByIdAndDelete(req.params.id);
     res.redirect("/medicine");
   } catch (error) {
-    // Handle errors
     console.error(error);
     res.redirect("/medicine");
   }
 });
 
-// Middleware to check if a user is logged in
 function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
@@ -180,7 +167,6 @@ function isLoggedIn(req, res, next) {
   res.redirect("/login");
 }
 
-// Server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
