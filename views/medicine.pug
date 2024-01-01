@@ -2,17 +2,27 @@ extends layout
 
 block content
   h1 Medicine Management
+
+  // Search Form
+  form(action='/medicine/search', method='GET', class='mb-3')
+    div.input-group
+      input(type='text', name='q', placeholder='Search...', class='form-control')
+      div.input-group-append
+        input(type='submit', value='Search', class='btn btn-outline-secondary')
+
+  // Add Medicine Form
   form(action='/medicine/add', method='post')
     label(for='name') Medicine Name:
-    input(type='text', name='name', required)
+    input(type='text', name='name', required, class='form-control')
     br
     label(for='brand') Brand:
-    input(type='text', name='brand', required)
+    input(type='text', name='brand', required, class='form-control')
     br
-    input(type='submit', value='Add Medicine')
+    input(type='submit', value='Add Medicine', class='btn btn-primary')
 
   if medicines.length > 0
-    table
+    // Medicine List Table
+    table.table.table-striped.mt-3
       thead
         tr
           th Medicine Name
@@ -24,13 +34,14 @@ block content
             td= medicine.name
             td= medicine.brand
             td
-              a(href=`/medicine/edit/${medicine._id}`) Edit
-              |  | 
-              a(href=`/medicine/delete/${medicine._id}`) Delete
+              a(href=`/medicine/edit/${medicine._id}`, class='btn btn-warning btn-sm') Edit
+              | 
+              a(href=`/medicine/delete/${medicine._id}`, onclick='return confirm("Are you sure you want to delete this medicine?")', class='btn btn-danger btn-sm') Delete
   else
     p No medicines available.
 
   hr
 
+  // Logout Button
   form(action='/logout', method='get')
-    input(type='submit', value='Logout')
+    input(type='submit', value='Logout', class='btn btn-secondary')

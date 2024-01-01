@@ -75,6 +75,21 @@ app.get("/logout", (req, res) => {
 });
 
 // Medicine routes
+
+app.get("/medicine/search", isLoggedIn, async (req, res) => {
+  const query = req.query.q; // Get the search query from the URL parameter
+  try {
+    const medicines = await Medicine.find(
+      { $text: { $search: query }, user: req.user },
+      { score: { $meta: "textScore" } } // Sort by text score
+    ).sort({ score: { $meta: "textScore" } });
+    res.render("medicine", { medicines });
+  } catch (error) {
+    console.error(error);
+    res.redirect("/medicine");
+  }
+});
+
 app.get("/medicine", isLoggedIn, async (req, res) => {
   const medicines = await Medicine.find({ user: req.user });
   res.render("medicine", { medicines });
